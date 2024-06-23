@@ -45,7 +45,6 @@
       // 平行光源(色、強さ）主光源
       var directionalLightM = new THREE.DirectionalLight(0xffffff, 0.3);
       directionalLightM.position.set(0, 10, 0);
-      directionalLightM.castShadow = true;
       //シーンに追加
       scene.add(directionalLightM);
 
@@ -61,7 +60,7 @@
 
       // 床を作成
       var planeGeometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-      var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x7f7f7f, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
+      var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x8a9c84, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
       var plane = new THREE.Mesh(planeGeometry, planeMaterial);
       plane.receiveShadow = true; //影がつく
       plane.rotation.set(-Math.PI / 2, 0, 0);
@@ -203,19 +202,28 @@
       car.add(headlight2);
       car.add(headlight2.target);
 
-      //角柱〜円柱
-      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.5, 1, 5);
-      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
+      //木の葉
+      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
+      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
       var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-      cylinder.position.set(-2, -1, -2);
+      cylinder.position.set(0, 2.3, 0);
+      cylinder.scale.set(0.81, 0.81, 0.81);
       scene.add(cylinder);
+      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
+      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+      var cylinder2 = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+      cylinder2.position.set(0, 1.8, 0);
+      scene.add(cylinder2);
+      cylinder.castShadow = true;
+      cylinder2.castShadow = true;
 
-      //角柱〜円柱
-      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.5, 1, 5);
-      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
-      var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-      cylinder.position.set(-1, -1, -2);
-      scene.add(cylinder);
+      //木の幹
+      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.25, 2, 5);
+      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x6b3f31 });
+      var cylinder3 = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+      cylinder3.position.set(0, 1, 0);
+      scene.add(cylinder3);
+      cylinder3.castShadow = true;
 
       //全てのグループ作成
       const all = new THREE.Group();

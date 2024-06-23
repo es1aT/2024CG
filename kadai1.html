@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Demo</title>
+  <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+  <script>
+    // ページの読み込みを待つ
+    window.addEventListener('DOMContentLoaded', init);
+
+    var init = function () {
+      //サイズ指定
+      var width = 800,
+        height = 600;
+
+      // レンダラーを作成
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(width, height);
+      document.body.appendChild(renderer.domElement);
+      // レンダラー：シャドウを有効にする
+      renderer.shadowMap.enabled = true;
+
+      // シーンを作成
+      var scene = new THREE.Scene();
+
+      // グリッド追加
+      const gridHelper = new THREE.GridHelper(3, 10); // size, step
+      scene.add(gridHelper);
+      const axisHelper = new THREE.AxisHelper(2); //軸の長さ X：赤、Y：緑、z：青
+      scene.add(axisHelper);
+
+      // カメラを作成
+      var camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
+      camera.position.set(2, 2, 5); // 位置を設定
+      camera.lookAt(0, 0, 0);
+
+      // カメラコントローラーを作成
+      const controls = new THREE.OrbitControls(camera, document.body);
+
+      // 平行光源(色、強さ）主光源
+      var directionalLightM = new THREE.DirectionalLight(0xffffff, 0.3);
+      directionalLightM.position.set(0, 10, 0);
+      directionalLightM.castShadow = true;
+      //シーンに追加
+      scene.add(directionalLightM);
+
+      // 照明を作成SpotLight(色, 光の強さ, 距離, 照射角, ボケ具合, 減衰率)
+      var light = new THREE.SpotLight(0xffffff, 1, 100, Math.PI / 20, 1);
+      light.position.set(15, 25, 15);
+      light.target.position.set(0, 0, 0);
+      // ライトに影を有効にする
+      light.castShadow = true;
+      light.shadow.mapSize.width = 2048;
+      light.shadow.mapSize.height = 2048;
+      scene.add(light);
+
+      // 床を作成
+      var planeGeometry = new THREE.PlaneGeometry(10, 10, 10, 10);
+      var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x7f7f7f, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
+      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.receiveShadow = true; //影がつく
+      plane.rotation.set(-Math.PI / 2, 0, 0);
+      plane.position.set(0, 0.3, 0);
+      scene.add(plane);
+
+      // 車を作成
+      var car1 = new THREE.BoxGeometry(0.82, 0.5, 0.5);
+      var car2 = new THREE.BoxGeometry(0.82, 0.5, 0.5);
+      var car3 = new THREE.BoxGeometry(0.82, 0.5, 0.5);
+      var car4 = new THREE.BoxGeometry(0.82, 0.45, 1.8);
+      var car5 = new THREE.BoxGeometry(0.82, 0.45, 1);
+      var ta = new THREE.CylinderGeometry(0.2, 0.2, 0.2, 12);
+      var ta2 = new THREE.CylinderGeometry(0.2, 0.2, 0.2, 12);
+      var ta3 = new THREE.CylinderGeometry(0.2, 0.2, 0.2, 12);
+      var ta4 = new THREE.CylinderGeometry(0.2, 0.2, 0.2, 12);
+      var sta = new THREE.CylinderGeometry(0.11, 0.11, 0.204, 12);
+      var sta2 = new THREE.CylinderGeometry(0.11, 0.11, 0.204, 12);
+      var sta3 = new THREE.CylinderGeometry(0.11, 0.11, 0.204, 12);
+      var sta4 = new THREE.CylinderGeometry(0.11, 0.11, 0.204, 12);
+      var cLight1 = new THREE.BoxGeometry(0.2, 0.15, 0.2);
+      var cLight2 = new THREE.BoxGeometry(0.2, 0.15, 0.2);
+      var cLight3 = new THREE.BoxGeometry(0.2, 0.15, 0.2);
+      var cLight4 = new THREE.BoxGeometry(0.2, 0.15, 0.2);
+      var material = new THREE.MeshPhongMaterial({ color: 0x0000ff });
+      var material2 = new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0, roughness: 1 });
+      var material3 = new THREE.MeshPhongMaterial({ color: 0xffffe0, emissive: 0xffffff, emissiveIntensity: 0.7 });
+      var material4 = new THREE.MeshPhongMaterial({ color: 0x900000, emissive: 0x900000, emissiveIntensity: 1 });
+      var material5 = new THREE.MeshPhongMaterial({ color: 0xffffff });
+
+      var box = new THREE.Mesh(car1, material);
+      var box2 = new THREE.Mesh(car2, material);
+      var box3 = new THREE.Mesh(car3, material);
+      var box4 = new THREE.Mesh(car4, material);
+      var box5 = new THREE.Mesh(car5, material);
+      var taiya = new THREE.Mesh(ta, material2);
+      var taiya2 = new THREE.Mesh(ta2, material2);
+      var taiya3 = new THREE.Mesh(ta3, material2);
+      var taiya4 = new THREE.Mesh(ta4, material2);
+      var staiya = new THREE.Mesh(sta, material5);
+      var staiya2 = new THREE.Mesh(sta2, material5);
+      var staiya3 = new THREE.Mesh(sta3, material5);
+      var staiya4 = new THREE.Mesh(sta4, material5);
+      var rai = new THREE.Mesh(cLight1, material3);
+      var rai2 = new THREE.Mesh(cLight2, material3);
+      var rai3 = new THREE.Mesh(cLight3, material4);
+      var rai4 = new THREE.Mesh(cLight4, material4);
+      box.position.set(0, 1, 0);
+      box2.position.set(0, 0.9045, 0.1725);
+      box2.rotation.x = 1;
+      box3.position.set(0, 0.9045, -0.1725);
+      box3.rotation.x = -1;
+      box4.position.set(0, 0.65, 0.15);
+      box5.position.set(0, 0.65, 0.15);
+      taiya.position.set(0.35, 0.5, 0.6);
+      taiya.rotation.z = 1.58;
+      taiya.rotation.y = -0.21;
+      taiya2.position.set(0.35, 0.5, -0.4);
+      taiya2.rotation.z = 1.58;
+      taiya2.rotation.y = -0.21;
+      taiya3.position.set(-0.35, 0.5, 0.6);
+      taiya3.rotation.z = 1.58;
+      taiya3.rotation.y = -0.21;
+      taiya4.position.set(-0.35, 0.5, -0.4);
+      taiya4.rotation.z = 1.58;
+      taiya4.rotation.y = -0.21;
+      staiya.position.set(0.35, 0.5, 0.6);
+      staiya.rotation.z = 1.58;
+      staiya.rotation.y = -0.21;
+      staiya2.position.set(0.35, 0.5, -0.4);
+      staiya2.rotation.z = 1.58;
+      staiya2.rotation.y = -0.21;
+      staiya3.position.set(-0.35, 0.5, 0.6);
+      staiya3.rotation.z = 1.58;
+      staiya3.rotation.y = -0.21;
+      staiya4.position.set(-0.35, 0.5, -0.4);
+      staiya4.rotation.z = 1.58;
+      staiya4.rotation.y = -0.21;
+      rai.position.set(0.29, 0.77, 0.98);
+      rai2.position.set(-0.29, 0.77, 0.98);
+      rai3.position.set(0.29, 0.77, -0.68);
+      rai4.position.set(-0.29, 0.77, -0.68);
+
+      //車のオブジェクト
+      const car = new THREE.Group();
+      car.add(box);
+      car.add(box2);
+      car.add(box3);
+      car.add(box4);
+      car.add(box5);
+      car.add(taiya);
+      car.add(taiya2);
+      car.add(taiya3);
+      car.add(taiya4);
+      car.add(staiya);
+      car.add(staiya2);
+      car.add(staiya3);
+      car.add(staiya4);
+      car.add(rai);
+      car.add(rai2);
+      car.add(rai3);
+      car.add(rai4);
+      car.position.set(0, 0, 2);
+      scene.add(car);
+      box.castShadow = true;
+      box2.castShadow = true;
+      box3.castShadow = true;
+      box4.castShadow = true;
+      box5.castShadow = true;
+      taiya.castShadow = true;
+      taiya2.castShadow = true;
+      taiya3.castShadow = true;
+      taiya4.castShadow = true;
+      staiya.castShadow = true;
+      staiya2.castShadow = true;
+      staiya3.castShadow = true;
+      staiya4.castShadow = true;
+      rai.castShadow = true;
+      rai2.castShadow = true;
+      rai3.castShadow = true;
+      rai4.castShadow = true;
+
+      // ヘッドライト用のスポットライト
+      var headlight = new THREE.SpotLight(0xffffe0, 1);
+      headlight.position.set(0.29, 0.77, 0.98);
+      headlight.target.position.set(0.29, 0.77, 5);
+      headlight.angle = Math.PI / 8;
+      headlight.penumbra = 0.6;
+      headlight.castShadow = true;
+      car.add(headlight);
+      car.add(headlight.target);
+
+      var headlight2 = new THREE.SpotLight(0xffffe0, 1);
+      headlight2.position.set(-0.29, 0.77, 0.98);
+      headlight2.target.position.set(-0.29, 0.77, 5);
+      headlight2.angle = Math.PI / 8;
+      headlight2.penumbra = 0.6;
+      headlight2.castShadow = true;
+      car.add(headlight2);
+      car.add(headlight2.target);
+
+      //角柱〜円柱
+      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.5, 1, 5);
+      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
+      var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+      cylinder.position.set(-2, -1, -2);
+      scene.add(cylinder);
+
+      //角柱〜円柱
+      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.5, 1, 5);
+      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
+      var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+      cylinder.position.set(-1, -1, -2);
+      scene.add(cylinder);
+
+      //全てのグループ作成
+      const all = new THREE.Group();
+      all.add(plane);
+      all.add(car);
+      all.position.set(0, 0, 0);
+      scene.add(all);
+
+      // 初回実行（描画処理）
+      var update = function () {
+        renderer.render(scene, camera);
+        requestAnimationFrame(update);
+
+        // 車を中心の周りを周回させる
+        var time = Date.now() * 0.0008;
+        car.position.x = Math.cos(time) * 2;
+        car.position.z = Math.sin(time) * 2;
+        car.rotation.y = -time;
+      };
+
+      update();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>

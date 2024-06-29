@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Demo</title>
+  <title>WebGL 最初の作品</title>
   <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
 </head>
@@ -46,7 +46,6 @@
       // 平行光源(色、強さ）主光源
       var directionalLightM = new THREE.DirectionalLight(0xffffff, 0.3);
       directionalLightM.position.set(0, 10, 0);
-      //シーンに追加
       scene.add(directionalLightM);
 
       // 照明を作成SpotLight(色, 光の強さ, 距離, 照射角, ボケ具合, 減衰率)
@@ -60,9 +59,9 @@
       scene.add(light);
 
       // 床を作成
-      var planeGeometry = new THREE.PlaneGeometry(10, 10, 10, 10);
-      var planeMaterial = new THREE.MeshStandardMaterial({ color: 0x8a9c84, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
-      var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      var planeG = new THREE.PlaneGeometry(10, 10, 10, 10);
+      var planeM = new THREE.MeshStandardMaterial({ color: 0x8a9c84, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
+      var plane = new THREE.Mesh(planeG, planeM);
       plane.receiveShadow = true; //影がつく
       plane.rotation.set(-Math.PI / 2, 0, 0);
       plane.position.set(0, 0.3, 0);
@@ -150,7 +149,7 @@
       rai3.position.set(0.29, 0.77, -0.68);
       rai4.position.set(-0.29, 0.77, -0.68);
 
-      //車のオブジェクト
+      //車のグループ化
       const car = new THREE.Group();
       car.add(box);
       car.add(box2);
@@ -212,32 +211,37 @@
       car.add(headlight2.target);
 
       //木の葉
-      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
-      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-      var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-      cylinder.position.set(0, 2.3, 0);
-      cylinder.scale.set(0.81, 0.81, 0.81);
-      scene.add(cylinder);
-      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
-      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-      var cylinder2 = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-      cylinder2.position.set(0, 1.8, 0);
-      scene.add(cylinder2);
-      cylinder.castShadow = true;
-      cylinder2.castShadow = true;
+      var leafG = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
+      var leafM = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+      var leaf = new THREE.Mesh(leafG, leafM);
+      leaf.position.set(0, 2.3, 0);
+      leaf.scale.set(0.81, 0.81, 0.81);
+      scene.add(leaf);
+      var leafG2 = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
+      var leafM2 = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+      var leaf2 = new THREE.Mesh(leafG2, leafM2);
+      leaf2.position.set(0, 1.8, 0);
+      scene.add(leaf2);
+      leaf.castShadow = true;
+      leaf2.castShadow = true;
 
       //木の幹
-      var cylinderGeometry = new THREE.CylinderGeometry(0.25, 0.25, 2, 5);
-      var cylinderMaterial = new THREE.MeshPhongMaterial({ color: 0x6b3f31 });
-      var cylinder3 = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
-      cylinder3.position.set(0, 1, 0);
-      scene.add(cylinder3);
-      cylinder3.castShadow = true;
+      var stemG = new THREE.CylinderGeometry(0.25, 0.25, 2, 5);
+      var stemM = new THREE.MeshPhongMaterial({ color: 0x6b3f31 });
+      var stem = new THREE.Mesh(stemG, stemM);
+      stem.position.set(0, 1, 0);
+      scene.add(stem);
+      stem.castShadow = true;
 
-      //全てのグループ作成
+      //木のグループ化
+      const tree = new THREE.Group();
+
+
+      //全てをグループ化
       const all = new THREE.Group();
       all.add(plane);
       all.add(car);
+      all.add(tree);
       all.position.set(0, 0, 0);
       scene.add(all);
 

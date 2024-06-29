@@ -212,10 +212,10 @@
 
       //木の葉
       var leafG = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
-      var leafM = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+      var leafM = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
       var leaf = new THREE.Mesh(leafG, leafM);
       var leafG2 = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
-      var leafM2 = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+      var leafM2 = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
       var leaf2 = new THREE.Mesh(leafG2, leafM2);
       leaf.position.set(0, 2.3, 0);
       leaf.scale.set(0.81, 0.81, 0.81);

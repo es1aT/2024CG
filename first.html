@@ -214,28 +214,29 @@
       var leafG = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
       var leafM = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
       var leaf = new THREE.Mesh(leafG, leafM);
-      leaf.position.set(0, 2.3, 0);
-      leaf.scale.set(0.81, 0.81, 0.81);
-      scene.add(leaf);
       var leafG2 = new THREE.CylinderGeometry(0.25, 0.8, 1, 5);
       var leafM2 = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
       var leaf2 = new THREE.Mesh(leafG2, leafM2);
+      leaf.position.set(0, 2.3, 0);
+      leaf.scale.set(0.81, 0.81, 0.81);
       leaf2.position.set(0, 1.8, 0);
-      scene.add(leaf2);
-      leaf.castShadow = true;
-      leaf2.castShadow = true;
 
       //木の幹
       var stemG = new THREE.CylinderGeometry(0.25, 0.25, 2, 5);
       var stemM = new THREE.MeshPhongMaterial({ color: 0x6b3f31 });
       var stem = new THREE.Mesh(stemG, stemM);
       stem.position.set(0, 1, 0);
-      scene.add(stem);
-      stem.castShadow = true;
 
       //木のグループ化
       const tree = new THREE.Group();
+      tree.add(leaf);
+      tree.add(leaf2);
+      tree.add(stem);
 
+      //木の影の追加
+      leaf.castShadow = true;
+      leaf2.castShadow = true;
+      stem.castShadow = true;
 
       //全てをグループ化
       const all = new THREE.Group();

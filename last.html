@@ -39,7 +39,20 @@
 
       // 太陽を作成
       const sunGeo = new THREE.SphereGeometry(2, 32, 32);
-      const sunTe = textureLoader.load('sun.png');
+      const sunTe = textureLoader.load(
+        'sun.png',
+        function (texture) {
+          const sunMat = new THREE.MeshPhongMaterial({ map: texture });
+          const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+          sunMesh.castShadow = true;
+          scene.add(sunMesh);
+        },
+        undefined,
+        function (err) {
+          console.error('An error happened while loading the texture.');
+        }
+      );
+
       const sunMat = new THREE.MeshPhongMaterial({ map: sunTe });
       const sunMesh = new THREE.Mesh(sunGeo, sunMat);
       sunMesh.castShadow = true;

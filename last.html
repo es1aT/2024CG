@@ -91,69 +91,105 @@
       const starField = new THREE.Points(starsGeo, starsMat);
       atmo.add(starField);
 
-      // 床を作成
-      const planeG = new THREE.PlaneGeometry(50, 50);
-      const planeM = new THREE.MeshStandardMaterial({ color: 0x808080, metalness: 0, roughness: 0.9, side: THREE.DoubleSide });
-      const plane = new THREE.Mesh(planeG, planeM);
-      plane.receiveShadow = true;
-      plane.rotation.set(-Math.PI / 2, 0, 0);
-      plane.position.set(0, 0, 0);
-      landscape.add(plane);
+      // 水面を作成
+      const waterGeometry = new THREE.PlaneGeometry(50, 50, 32, 32);
+      const waterMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1e90ff,
+        flatShading: true,
+        side: THREE.DoubleSide
+      });
+      const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+      waterMesh.rotation.x = -Math.PI / 2;
+      waterMesh.position.set(0, -6, 0);
+      landscape.add(waterMesh);
+
+      // 平べったい半球を作成
+      const hemisphereGeometry = new THREE.SphereGeometry(20, 32, 32, 0, Math.PI * 2, 0, Math.PI / 3.2);
+      const hemisphereMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
+      const hemisphere = new THREE.Mesh(hemisphereGeometry, hemisphereMaterial);
+      hemisphere.scale.set(1, 0.5, 1);
+      hemisphere.position.set(0, -12, 0);
+      landscape.add(hemisphere);
+
+      // 草の部分を追加
+      const grassGeometry = new THREE.SphereGeometry(17, 32, 32, 0, Math.PI * 2, 0, Math.PI / 3);
+      const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+      const grass = new THREE.Mesh(grassGeometry, grassMaterial);
+      grass.scale.set(1, 0.5, 1);
+      grass.position.set(0, -9.5, 0);
+      landscape.add(grass);
 
       // 塔部分を作成
-      const towerG = new THREE.CylinderGeometry(1.2, 1.5, 8, 32); // 上部半径1、下部半径2、高さ10、セグメント32
+      const towerG = new THREE.CylinderGeometry(1.2, 1.6, 10, 32);
       const towerM = new THREE.MeshStandardMaterial({ map: textureLoader.load('kabe.png') });
       const tower = new THREE.Mesh(towerG, towerM);
-      tower.position.set(0, 4, 0); // 塔を適切な位置に配置
-      landscape.add(tower); // グループに追加
+      tower.position.set(0, 2, 0);
+      landscape.add(tower);
 
       // 光の下部分を作成
-      const toudaiG = new THREE.CylinderGeometry(1.2, 1, 0.8, 32); // 上部にある円筒形の部分
+      const toudaiG = new THREE.CylinderGeometry(1.15, 1.2, 0.5, 32);
       const toudai = new THREE.Mesh(toudaiG, towerM);
-      toudai.position.set(0, 8.45, 0); // 塔の上に配置
-      landscape.add(toudai); // グループに追加
+      const toudai2G = new THREE.CylinderGeometry(1, 1, 2, 32);
+      const toudai2 = new THREE.Mesh(toudai2G, towerM);
+      toudai.position.set(0, 8.45, 0);
+      landscape.add(toudai);
+      toudai2.position.set(0, 7.45, 0);
+      landscape.add(toudai2);
 
-      // 上部の光の部分を作成
-      const hikariG = new THREE.CylinderGeometry(1.18, 1.18, 1.2, 32);
+      // 灯台のガラスの部分を作成
+      const hikariG = new THREE.CylinderGeometry(0.9, 0.9, 1.5, 32);
       const hikariM = new THREE.MeshStandardMaterial({
         color: 0xffffff, transparent: true, opacity: 0.7, roughness: 0.8,
         metalness: 0.1, envMapIntensity: 0.9, bumpScale: 0.1
       });
       const hikari = new THREE.Mesh(hikariG, hikariM);
-      hikari.position.set(0, 9.45, 0); // 塔の上に配置
-      landscape.add(hikari); // グループに追加
+      hikari.position.set(0, 9.45, 0);
+      landscape.add(hikari);
 
       // 灯台の床部分を作成
-      const floorG = new THREE.CylinderGeometry(1.82, 1.82, 0.1, 32); // 屋根の円錐形ジオメトリ
+      const floorG = new THREE.ConeGeometry(1.82, 1, 32);
       const floor = new THREE.Mesh(floorG, towerM);
-      floor.position.set(0, 8, 0); // 塔の最上部に配置
-      landscape.add(floor); // グループに追加
+      const floor2G = new THREE.CylinderGeometry(1.82, 1.82, 0.1, 32);
+      const floor2 = new THREE.Mesh(floor2G, towerM);
+      floor.rotation.x = Math.PI;
+      floor.position.set(0, 6.4, 0);
+      landscape.add(floor);
+      floor2.position.set(0, 6.95, 0);
+      landscape.add(floor2);
 
       // 灯台の柵部分を作成
-      const sakuG = new THREE.TorusGeometry(1.8, 0.03, 4, 32); // 屋根の円錐形ジオメトリ
+      const sakuG = new THREE.TorusGeometry(1.8, 0.03, 4, 32);
       const saku = new THREE.Mesh(sakuG, towerM);
-      saku.position.set(0, 8.65, 0); // 塔の最上部に配置
+      saku.position.set(0, 7.65, 0);
       saku.rotation.set(Math.PI / 2, 0, 0);
-      landscape.add(saku); // グループに追加
-      const saku2G = new THREE.TorusGeometry(1.8, 0.03, 4, 32); // 屋根の円錐形ジオメトリ
+      landscape.add(saku);
+      const saku2G = new THREE.TorusGeometry(1.8, 0.03, 4, 32);
       const saku2 = new THREE.Mesh(saku2G, towerM);
-      saku2.position.set(0, 8.325, 0); // 塔の最上部に配置
+      saku2.position.set(0, 7.325, 0);
       saku2.rotation.set(Math.PI / 2, 0, 0);
-      landscape.add(saku2); // グループに追加
+      landscape.add(saku2);
 
       // 灯台の屋根部分
       const roofG = new THREE.SphereGeometry(1.2, 43, 43, 0, Math.PI * 2, 0, Math.PI / 2);
       const roof = new THREE.Mesh(roofG, towerM);
-      roof.position.set(0, 10, 0); // 塔の最上部に配置
+      const lidG = new THREE.CylinderGeometry(1.2, 1.2, 0.1, 32);
+      const lid = new THREE.Mesh(lidG, towerM);
+      roof.position.set(0, 9.8, 0);
+      lid.position.set(0, 9.8, 0);
       const poleG = new THREE.CylinderGeometry(0.25, 0.25, 1, 32);
       const pole = new THREE.Mesh(poleG, towerM);
-      pole.position.set(0, 10.85, 0); // 塔の最上部に配置
+      pole.position.set(0, 10.65, 0);
       const ballG = new THREE.SphereGeometry(0.2, 43, 43);
       const ball = new THREE.Mesh(ballG, towerM);
-      ball.position.set(0, 11.5, 0); // 塔の最上部に配置
+      ball.position.set(0, 11.3, 0);
+      const needleG = new THREE.ConeGeometry(0.1, 1.1, 32);
+      const needle = new THREE.Mesh(needleG, towerM);
+      needle.position.set(0, 12, 0);
       landscape.add(roof);
+      landscape.add(lid);
       landscape.add(pole);
       landscape.add(ball);
+      landscape.add(needle);
 
       // ランプの円柱部分を作成
       const lampG = new THREE.CylinderGeometry(0.3, 0.3, 1, 32, 1, true);
@@ -169,8 +205,21 @@
         bodyM  // 胴体部分
       ]);
       lamp.rotation.set(Math.PI / 2, 0, 0); // x軸方向に90度回転
-      lamp.position.set(0, 9.45, 0); // ランプの位置を設定
+      lamp.position.set(0, 9.25, 0); // ランプの位置を設定
       landscape.add(lamp);
+
+      const spotlight1 = new THREE.SpotLight(0xffff00, 1.5, 100, Math.PI / 6, 0.5);
+      spotlight1.position.set(0, 9.25, 0);
+      spotlight1.target.position.set(-30, 9.25, 0);  // ライトが照射される方向
+      landscape.add(spotlight1);
+      landscape.add(spotlight1.target);
+
+      const spotlight2 = new THREE.SpotLight(0xffff00, 1.5, 100, Math.PI / 6, 0.5);
+      spotlight2.position.set(0, 9.25, 0);
+      spotlight2.target.position.set(30, 9.25, 0);  // ライトが反対方向に照射されるよう設定
+      landscape.add(spotlight2);
+      landscape.add(spotlight2.target);
+
 
       // 昼と夜の環境光を追加
       const ambLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -182,7 +231,6 @@
 
       // 初回実行（描画処理）
       function update() {
-        // 時間の経過を更新
         time += 0.01;
 
         // 太陽と月の位置を更新
@@ -230,6 +278,15 @@
         //textureLoader.load('sky.png', function (texture) {
         //  scene.background = texture;
         //});
+
+        // 波のアニメーションを更新
+        const vertices = waterMesh.geometry.attributes.position.array;
+        for (let i = 0; i < vertices.length; i += 3) {
+          const x = vertices[i];
+          const y = vertices[i + 1];
+          vertices[i + 2] = Math.sin(x * 0.25 + time) * 0.25 + Math.sin(y * 0.25 + time) * 0.25;
+        }
+        waterMesh.geometry.attributes.position.needsUpdate = true;
 
         renderer.render(scene, camera);
         requestAnimationFrame(update);

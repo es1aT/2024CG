@@ -26,10 +26,11 @@
       const scene = new THREE.Scene();
       const atmo = new THREE.Group();
       const landscape = new THREE.Group();
+      const lampGroup = new THREE.Group();
 
       // カメラを作成
       const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-      camera.position.set(0, 20, -35); // 位置を設定
+      camera.position.set(0, 20, -35);
       camera.lookAt(0, 5, 0);
 
       // カメラコントローラーを作成
@@ -37,11 +38,6 @@
 
       // テクスチャー読み込み
       const textureLoader = new THREE.TextureLoader();
-
-      // 背景画像を設定（雲が映った空の画像）
-      textureLoader.load('sky.png', function (texture) {
-        scene.background = texture;
-      });
 
       // 太陽をスプライトで作成
       const sunMat = new THREE.SpriteMaterial({ map: textureLoader.load('sun.png') });
@@ -59,10 +55,10 @@
       let time = 0;
 
       // 背景色の定義
-      const morningC = new THREE.Color(0xffd580); // オレンジ
-      const noonC = new THREE.Color(0x87CEEB); // 水色
-      const eveC = new THREE.Color(0xffa500); // オレンジ
-      const nightC = new THREE.Color(0x000033); // 紺
+      const morningC = new THREE.Color(0xffd580); // 朝
+      const noonC = new THREE.Color(0x87CEEB); // 昼
+      const eveC = new THREE.Color(0xffa500); // 夕
+      const nightC = new THREE.Color(0x000033); // 夜
 
       // 月を作成
       const moonTex = textureLoader.load('moon.png');
@@ -94,13 +90,13 @@
       // 水面を作成
       const waterGeometry = new THREE.PlaneGeometry(50, 50, 32, 32);
       const waterMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1e90ff, // 水色を基調とした色
+        color: 0x1e90ff,
         flatShading: true,
         side: THREE.DoubleSide,
-        transparent: true, // 透明度を有効にする
-        opacity: 0.6, // 透明度の設定（0.0～1.0、0.0が完全に透明）
-        roughness: 0.3, // 水面の粗さを調整
-        metalness: 0.1  // 水面の反射率を調整
+        transparent: true,
+        opacity: 0.6,
+        roughness: 0.3,
+        metalness: 0.1
       });
       const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
       waterMesh.rotation.x = -Math.PI / 2;
@@ -199,10 +195,7 @@
       landscape.add(ball);
       landscape.add(needle);
       landscape.add(stand);
-
-      // 灯台のランプ部分とビームを含むグループを作成
-      const lampGroup = new THREE.Group();
-      lampGroup.position.set(0, 9.45, 0); // 回転の中心を設定
+      lampGroup.position.set(0, 9.45, 0);
 
       // 灯台のランプ部分を作成
       const lampG = new THREE.CylinderGeometry(0.3, 0.3, 1, 32);
@@ -227,29 +220,28 @@
         opacity: 0.2
       });
       const beam1 = new THREE.Mesh(beamGeometry1, beamMaterial1);
-      beam1.position.set(0, -0.15, 15); // ビームの位置をlampGroup内で調整
+      beam1.position.set(0, -0.15, 15);
       beam1.rotation.set(Math.PI / 2, 0, 0);
       lampGroup.add(beam1);
 
       // 光のビームを作成（ランプライト2）
-      const beamGeometry2 = new THREE.CylinderGeometry(2, 0.2, 30, 32, 1, true);
-      const beamMaterial2 = new THREE.MeshBasicMaterial({
+      const beamG2 = new THREE.CylinderGeometry(2, 0.2, 30, 32, 1, true);
+      const beamM2 = new THREE.MeshBasicMaterial({
         color: 0xffff00,
         transparent: true,
         opacity: 0.2
       });
-      const beam2 = new THREE.Mesh(beamGeometry2, beamMaterial2);
-      beam2.position.set(0, -0.15, -15); // ビームの位置をlampGroup内で調整
-      beam2.rotation.set(Math.PI / 2, 0, Math.PI); // 反対方向に回転
+      const beam2 = new THREE.Mesh(beamG2, beamM2);
+      beam2.position.set(0, -0.15, -15);
+      beam2.rotation.set(Math.PI / 2, 0, Math.PI);
       lampGroup.add(beam2);
-
-      landscape.add(lampGroup); // ランプとビームを含むグループをシーンに追加
 
       // 昼と夜の環境光を追加
       const ambLight = new THREE.AmbientLight(0xffffff, 0.8);
       scene.add(ambLight);
 
       //グループをsceneに追加
+      landscape.add(lampGroup);
       scene.add(atmo);
       scene.add(landscape);
 
@@ -263,10 +255,19 @@
         moon.position.set(-sun.position.x, -sun.position.y, -sun.position.z);
         moonLight.position.copy(moon.position);
 
+        // 波のアニメーションを更新
+        const vertices = waterMesh.geometry.attributes.position.array;
+        for (let i = 0; i < vertices.length; i += 3) {
+          const x = vertices[i];
+          const y = vertices[i + 1];
+          vertices[i + 2] = Math.sin(x * 0.25 + time * 2) * 0.25 + Math.sin(y * 0.25 + time * 2) * 0.25;
+        }
+        waterMesh.geometry.attributes.position.needsUpdate = true;
+
         // 空の色を変化させる
         let sky;
         const sunY = sun.position.y;
-        if (sunY > 2) { // 昼間
+        if (sunY > 2) { // 昼
           sky = noonC;
           starField.visible = false;
           sunLight.intensity = 1.5;
@@ -276,7 +277,7 @@
           beam2.visible = false;
           ambientLight.intensity = 0.0;
           pointLight.visible = false;
-        } else if (sunY > 0) { // 夕方
+        } else if (sunY > 0) { // 夕
           const factor = (2 - sunY) / 2;
           sky = noonC.clone().lerp(eveC, factor);
           starField.visible = false;
@@ -287,7 +288,7 @@
           beam2.visible = false;
           ambientLight.intensity = 0.0;
           pointLight.visible = false;
-        } else if (sunY > -2) { // 早朝・夜
+        } else if (sunY > -2) { // 朝
           const factor = (2 + sunY) / 2;
           sky = nightC.clone().lerp(eveC, factor);
           starField.visible = true;
@@ -299,7 +300,7 @@
           ambientLight.intensity = 0.3;
           pointLight.visible = true;
           lampGroup.rotation.y += 0.01;
-        } else { // 深夜
+        } else { // 夜
           sky = nightC;
           starField.visible = true;
           sunLight.intensity = 0;
@@ -311,28 +312,10 @@
           ambientLight.intensity = 0.3;
           pointLight.visible = true;
         }
+
         scene.background = sky;
-
-        // 環境光の強度をゆっくり変化させる
         ambLight.intensity = THREE.MathUtils.lerp(ambLight.intensity, tgtInt, 0.05);
-        
-        // ランプグループを回転させる（時計の針のように回転）
-        lampGroup.rotation.y += 0.01; // y軸を中心に回転
-
-        // 背景画像を設定（雲が映った空の画像）
-        //textureLoader.load('sky.png', function (texture) {
-        //  scene.background = texture;
-        //});
-
-        // 波のアニメーションを更新
-        const vertices = waterMesh.geometry.attributes.position.array;
-        for (let i = 0; i < vertices.length; i += 3) {
-          const x = vertices[i];
-          const y = vertices[i + 1];
-          vertices[i + 2] = Math.sin(x * 0.25 + time*2) * 0.25 + Math.sin(y * 0.25 + time*2) * 0.25;
-        }
-        waterMesh.geometry.attributes.position.needsUpdate = true;
-
+        lampGroup.rotation.y += 0.01;
         renderer.render(scene, camera);
         requestAnimationFrame(update);
       }

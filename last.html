@@ -315,8 +315,7 @@
 
         // 環境光の強度をゆっくり変化させる
         ambLight.intensity = THREE.MathUtils.lerp(ambLight.intensity, tgtInt, 0.05);
-
-
+        
         // ランプグループを回転させる（時計の針のように回転）
         lampGroup.rotation.y += 0.01; // y軸を中心に回転
 
@@ -330,7 +329,7 @@
         for (let i = 0; i < vertices.length; i += 3) {
           const x = vertices[i];
           const y = vertices[i + 1];
-          vertices[i + 2] = Math.sin(x * 0.25 + time) * 0.25 + Math.sin(y * 0.25 + time) * 0.25;
+          vertices[i + 2] = Math.sin(x * 0.25 + time*2) * 0.25 + Math.sin(y * 0.25 + time*2) * 0.25;
         }
         waterMesh.geometry.attributes.position.needsUpdate = true;
 

@@ -30,8 +30,7 @@
 
       // カメラを作成
       const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-      camera.position.set(0, 20, -35);
-      camera.lookAt(0, 5, 0);
+      camera.position.set(0, 0.8, -55);
 
       // カメラコントローラーを作成
       new THREE.OrbitControls(camera, renderer.domElement);
@@ -39,14 +38,14 @@
       // テクスチャー読み込み
       const textureLoader = new THREE.TextureLoader();
 
-      // 太陽をスプライトで作成
+      // 太陽を作成
       const sunMat = new THREE.SpriteMaterial({ map: textureLoader.load('sun.png') });
       const sun = new THREE.Sprite(sunMat);
-      sun.scale.set(4, 4, 1);
+      sun.scale.set(20, 20, 1);
       atmo.add(sun);
 
       // 太陽の光源を作成
-      const sunLight = new THREE.PointLight(0xffffff, 1.5, 1000);
+      const sunLight = new THREE.PointLight(0xffffff, 20, 400);
       sunLight.position.copy(sun.position);
       sunLight.castShadow = true;
       atmo.add(sunLight);
@@ -64,32 +63,32 @@
       const moonTex = textureLoader.load('moon.png');
       const moonMat = new THREE.SpriteMaterial({ map: moonTex });
       const moon = new THREE.Sprite(moonMat);
-      moon.scale.set(3, 3, 1);
+      moon.scale.set(20, 20, 1);
       atmo.add(moon);
 
       // 月の光源を作成
-      const moonLight = new THREE.PointLight(0xffffff, 0.15, 1000);
+      const moonLight = new THREE.PointLight(0xffffff, 1, 300);
       moonLight.position.copy(moon.position);
       moonLight.castShadow = true;
       atmo.add(moonLight);
 
       // 星を作成
-      const starsGeo = new THREE.BufferGeometry();
+      const starsG = new THREE.BufferGeometry();
       const starCount = 5000;
-      const positions = new Float32Array(starCount * 3);
+      const pozi = new Float32Array(starCount * 3);
       for (let i = 0; i < starCount; i++) {
-        positions[i * 3] = THREE.Math.randFloatSpread(2000);
-        positions[i * 3 + 1] = THREE.Math.randFloatSpread(2000);
-        positions[i * 3 + 2] = THREE.Math.randFloatSpread(2000);
+        pozi[i * 3] = THREE.Math.randFloatSpread(2000);
+        pozi[i * 3 + 1] = THREE.Math.randFloatSpread(2000);
+        pozi[i * 3 + 2] = THREE.Math.randFloatSpread(2000);
       }
-      starsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const starsMat = new THREE.PointsMaterial({ color: 0x888888, size: 3 });
-      const starField = new THREE.Points(starsGeo, starsMat);
+      starsG.setAttribute('position', new THREE.BufferAttribute(pozi, 3));
+      const starsM = new THREE.PointsMaterial({ color: 0x888888, size: 3 });
+      const starField = new THREE.Points(starsG, starsM);
       atmo.add(starField);
 
       // 水面を作成
-      const waterGeometry = new THREE.PlaneGeometry(50, 50, 32, 32);
-      const waterMaterial = new THREE.MeshStandardMaterial({
+      const waterG = new THREE.PlaneGeometry(500, 500, 32, 32);
+      const waterM = new THREE.MeshStandardMaterial({
         color: 0x1e90ff,
         flatShading: true,
         side: THREE.DoubleSide,
@@ -98,11 +97,10 @@
         roughness: 0.3,
         metalness: 0.1
       });
-      const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+      const waterMesh = new THREE.Mesh(waterG, waterM);
       waterMesh.rotation.x = -Math.PI / 2;
       waterMesh.position.set(0, -6, 0);
       landscape.add(waterMesh);
-
 
       // 平べったい半球を作成
       const hemisphereGeometry = new THREE.SphereGeometry(20, 32, 32, 0, Math.PI * 2, 0, Math.PI / 3.2);
@@ -120,12 +118,19 @@
       grass.position.set(0, -9.5, 0);
       landscape.add(grass);
 
-      // 塔部分を作成
+      // 灯台の塔部分を作成
       const towerG = new THREE.CylinderGeometry(1.2, 1.6, 10, 32);
       const towerM = new THREE.MeshStandardMaterial({ map: textureLoader.load('kabe.png') });
       const tower = new THREE.Mesh(towerG, towerM);
       tower.position.set(0, 2, 0);
       landscape.add(tower);
+
+      // 塔の土台部分を作成
+      const baseG = new THREE.CylinderGeometry(1.6, 1.5, 1.1, 32);
+      const baseM = new THREE.MeshStandardMaterial({ color: 0x7d7d7d });
+      const base = new THREE.Mesh(baseG, baseM);
+      base.position.set(0, -0.7, 0);
+      landscape.add(base);
 
       // 光の下部分を作成
       const toudaiG = new THREE.CylinderGeometry(1.15, 1.2, 0.5, 32);
@@ -250,7 +255,8 @@
         time += 0.008;
 
         // 太陽と月の位置を更新
-        sun.position.set(30 * Math.cos(time), 10 * Math.sin(time), 30 * Math.sin(time));
+        let adjTime = Math.pow(Math.sin(time), 3);
+        sun.position.set(400 * Math.cos(time), 170 * adjTime, 400 * Math.sin(time));
         sunLight.position.copy(sun.position);
         moon.position.set(-sun.position.x, -sun.position.y, -sun.position.z);
         moonLight.position.copy(moon.position);
@@ -260,7 +266,7 @@
         for (let i = 0; i < vertices.length; i += 3) {
           const x = vertices[i];
           const y = vertices[i + 1];
-          vertices[i + 2] = Math.sin(x * 0.25 + time * 2) * 0.25 + Math.sin(y * 0.25 + time * 2) * 0.25;
+          vertices[i + 2] = Math.sin(x * 0.25 + time * 3) * 0.25 + Math.sin(y * 0.25 + time * 3) * 0.25;
         }
         waterMesh.geometry.attributes.position.needsUpdate = true;
 

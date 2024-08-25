@@ -39,7 +39,7 @@
       const textureLoader = new THREE.TextureLoader();
 
       // 太陽を作成
-      const sunMat = new THREE.SpriteMaterial({ map: textureLoader.load('sun.png') });
+      const sunMat = new THREE.SpriteMaterial({ map: textureLoader.load('textures/sun.png') });
       const sun = new THREE.Sprite(sunMat);
       sun.scale.set(20, 20, 1);
       atmo.add(sun);
@@ -60,7 +60,7 @@
       const nightC = new THREE.Color(0x000033); // 夜
 
       // 月を作成
-      const moonTex = textureLoader.load('moon.png');
+      const moonTex = textureLoader.load('textures/moon.png');
       const moonMat = new THREE.SpriteMaterial({ map: moonTex });
       const moon = new THREE.Sprite(moonMat);
       moon.scale.set(20, 20, 1);
@@ -120,7 +120,7 @@
 
       // 灯台の塔部分を作成
       const towerG = new THREE.CylinderGeometry(1.2, 1.6, 10, 32);
-      const towerM = new THREE.MeshStandardMaterial({ map: textureLoader.load('kabe.png') });
+      const towerM = new THREE.MeshStandardMaterial({ map: textureLoader.load('textures/toudai.png') });
       const tower = new THREE.Mesh(towerG, towerM);
       tower.position.set(0, 2, 0);
       landscape.add(tower);
